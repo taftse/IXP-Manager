@@ -62,12 +62,12 @@ class AdminController extends Controller
      *
      * @return view
      */
-    public function dashboard( Request $r ): View
+    public function dashboard( Request $request ): View
     {
         return view( 'admin/dashboard' )->with([
-            'stats'                 => $this->dashboardStats( $r ),
-            'graphs'                => $this->publicPeeringGraphs( $r ),
-            'graph_period'          => $r->query( 'graph_period', config( 'ixp_fe.admin_dashboard.default_graph_period' ) ),
+            'stats'                 => $this->dashboardStats( $request ),
+            'graphs'                => $this->publicPeeringGraphs( $request ),
+            'graph_period'          => $request->query( 'graph_period', config( 'ixp_fe.admin_dashboard.default_graph_period' ) ),
             'graph_periods'         => Graph::PERIOD_DESCS,
         ]);
     }

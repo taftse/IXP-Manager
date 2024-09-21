@@ -100,7 +100,7 @@ class GrapherServiceProvider extends ServiceProvider
         });
         
         // we have a few rendering functions we want to include here:
-        $this->app->make( Engine::class )->loadExtension( new GrapherRendererExtension(), [] );
+        //$this->app->make( Engine::class )->loadExtension( new GrapherRendererExtension(), [] );
     }
 
     /**
