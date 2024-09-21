@@ -145,7 +145,7 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
-    protected $routeMiddleware = [
+    protected $middlewareAliases  = [
         'auth'                  => Middleware\Authenticate::class,
         'auth.basic'            => AuthenticateWithBasicAuth::class,
         'auth.session'          => \Illuminate\Session\Middleware\AuthenticateSession::class,

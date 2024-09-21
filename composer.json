@@ -24,21 +24,20 @@
         }
     ],
     "require": {
-        "php": "^8.0.2",
+        "php": "^8.1",
         "ext-json": "*",
         "anahkiasen/former": "^4.6",
         "bacon/bacon-qr-code": "^2.0.3",
         "barryvdh/laravel-dompdf": "^2.0.0",
         "doctrine/dbal": "^3.0",
         "erusev/parsedown": "^1.7",
-        "fideloper/proxy": "^4.4",
         "foil/foil": "^0.6.7",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.3",
-        "laravel/framework": "^9.19",
+        "laravel/framework": "^10.0",
         "laravel/telescope": "^4.4.4",
         "laravel/tinker": "^2.7",
-        "laravel/ui": "^3.0",
+        "laravel/ui": "^4.0",
         "mews/purifier": "^3.2",
         "opensolutions/oss-snmp": "^1.0",
         "php-ds/php-ds": "^1.1",
@@ -59,12 +58,12 @@
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.2",
-        "nunomaduro/collision": "^6.1",
-        "phpunit/phpunit": "^9.5.10",
-        "psalm/plugin-laravel": "^2.9",
-        "spatie/laravel-ignition": "^1.0",
+        "nunomaduro/collision": "^7.0",
+        "phpunit/phpunit": "^10.0",
+        "psalm/plugin-laravel": "dev-master",
+        "spatie/laravel-ignition": "^2.0",
         "staudenmeir/dusk-updater": "^1.2.2",
-        "vimeo/psalm": "^4.7"
+        "vimeo/psalm": "^5.20"
     },
     "support": {
         "issues": "https://www.ixpmanager.org/support.php",
@@ -129,7 +128,7 @@
             "pestphp/pest-plugin": true
         },
         "platform": {
-            "php": "8.0.2"
+            "php": "8.1"
         }
     },
    "minimum-stability": "stable"

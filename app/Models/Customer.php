@@ -64,8 +64,8 @@ use IXP\Models\AtlasMeasurement;
  * @property string|null $peeringmacro
  * @property string|null $peeringpolicy
  * @property string|null $corpwww
- * @property Carbon|null $datejoin
- * @property Carbon|null $dateleave
+ * @property string|null $datejoin
+ * @property string|null $dateleave
  * @property int|null $status
  * @property int|null $activepeeringmatrix
  * @property int|null $lastupdatedby
@@ -244,9 +244,9 @@ class Customer extends Model
      *
      * @var array
      */
-    protected $dates = [
-        'datejoin',
-        'dateleave'
+    protected $casts = [
+        'datejoin' => 'datetime',
+        'dateleave' => 'datetime',
     ];
 
     /**
