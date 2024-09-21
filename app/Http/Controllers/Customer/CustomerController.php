@@ -86,51 +86,63 @@ class CustomerController extends Controller
      *
      * @return  View
      */
-    public function list( Request $r ): View
+    public function list( Request $request ): View
     {
-        if( ( $state = $r->state ) !== null ) {
+        if( ( $state = $request->state ) !== null ) {
             if( isset( Customer::$CUST_STATUS_TEXT[ $state ] ) ) {
-                $r->session()->put( "cust-list-state", $state );
+                $request->session()->put( "cust-list-state", $state );
             } else {
-                $r->session()->remove( "cust-list-state" );
+                $request->session()->remove( "cust-list-state" );
             }
-        } else if( $r->session()->exists( "cust-list-state" ) ) {
-            $state = $r->session()->get( "cust-list-state" );
+        } else if( $request->session()->exists( "cust-list-state" ) ) {
+            $state = $request->session()->get( "cust-list-state" );
         }
 
-        if( ( $type = $r->type ) !== null ) {
+        if( ( $type = $request->type ) !== null ) {
             if( isset( Customer::$CUST_TYPES_TEXT[ $type ] ) ) {
-                $r->session()->put( "cust-list-type", $type );
+                $request->session()->put( "cust-list-type", $type );
             } else {
-                $r->session()->remove( "cust-list-type" );
+                $request->session()->remove( "cust-list-type" );
             }
-        } else if( $r->session()->exists( "cust-list-type" ) ) {
-            $type = $r->session()->get( "cust-list-type" );
+        } else if( $request->session()->exists( "cust-list-type" ) ) {
+            $type = $request->session()->get( "cust-list-type" );
         }
 
-        if( ( $showCurrentOnly = $r->input( 'current-only' ) ) !== null ) {
-            $r->session()->put( "cust-list-current-only", $showCurrentOnly );
-        } else if( $r->session()->exists( "cust-list-current-only" ) ) {
-            $showCurrentOnly = $r->session()->get( "cust-list-current-only" );
+        if( ( $showCurrentOnly = $request->input( 'current-only' ) ) !== null ) {
+            $request->session()->put( "cust-list-current-only", $showCurrentOnly );
+        } else if( $request->session()->exists( "cust-list-current-only" ) ) {
+            $showCurrentOnly = $request->session()->get( "cust-list-current-only" );
         } else {
             $showCurrentOnly = false;
         }
 
         $tags = CustomerTag::all()->keyBy( 'id' )->toArray();
 
-        if( $r->tag  !== null ) {
-            if(  isset( $tags[ $r->tag ] ) ) {
-                $tid = $tags[ $r->tag ][ 'id' ];
-                $r->session()->put( "cust-list-tag", $tid );
+        if( $request->tag  !== null ) {
+            if(  isset( $tags[ $request->tag ] ) ) {
+                $tid = $tags[ $request->tag ][ 'id' ];
+                $request->session()->put( "cust-list-tag", $tid );
             } else {
-                $r->session()->remove( "cust-list-tag" );
+                $request->session()->remove( "cust-list-tag" );
                 $tid = false;
             }
-        } else if( $r->session()->exists( "cust-list-tag" ) ) {
-            $tid = $r->session()->get( "cust-list-tag" );
+        } else if( $request->session()->exists( "cust-list-tag" ) ) {
+            $tid = $request->session()->get( "cust-list-tag" );
         } else {
             $tid = false;
         }
+
+        $customers = Customer::selectRaw( 'cust.*' )
+            ->when( $tid, function( Builder $q, $tid ) {
+                return $q->leftJoin( 'cust_to_cust_tag AS t', 't.customer_id', 'cust.id' )
+                    ->where( 't.customer_tag_id', $tid );
+            } )->when( $state && isset( Customer::$CUST_STATUS_TEXT[ $state ] ), function( Builder $q ) use( $state ) {
+                return $q->where( 'cust.status', $state );
+            } )->when( $type && isset( Customer::$CUST_TYPES_TEXT[ $type ] ), function( Builder $q ) use( $type ) {
+                return $q->where( 'cust.type', $type );
+            } )->when( $showCurrentOnly, function( Builder $q ) {
+                return $q->whereRaw( Customer::SQL_CUST_CURRENT );
+            } )->orderByRaw( 'cust.name' )->get();
 
         return view( 'customer/list' )->with([
             'state'                 => $state           ?? false,
@@ -138,17 +150,7 @@ class CustomerController extends Controller
             'showCurrentOnly'       => $showCurrentOnly ?? false,
             'tag'                   => $tid ?? false,
             'tags'                  => $tags,
-            'custs'                 => Customer::selectRaw( 'cust.*' )
-                ->when( $tid, function( Builder $q, $tid ) {
-                    return $q->leftJoin( 'cust_to_cust_tag AS t', 't.customer_id', 'cust.id' )
-                        ->where( 't.customer_tag_id', $tid );
-                } )->when( $state && isset( Customer::$CUST_STATUS_TEXT[ $state ] ), function( Builder $q ) use( $state ) {
-                    return $q->where( 'cust.status', $state );
-                } )->when( $type && isset( Customer::$CUST_TYPES_TEXT[ $type ] ), function( Builder $q ) use( $type ) {
-                    return $q->where( 'cust.type', $type );
-                } )->when( $showCurrentOnly, function( Builder $q ) {
-                    return $q->whereRaw( Customer::SQL_CUST_CURRENT );
-                } )->orderByRaw( 'cust.name' )->get(),
+            'customers'             => $customers,
         ]);
     }
 

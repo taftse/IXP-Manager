@@ -154,7 +154,7 @@
 
         </script>
 
-        @section('scripts')
+        @yield('scripts')
 
 
             // Skin this file to add your own footer content such as
